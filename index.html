@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Castle Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a loud, joyful classroom game show, run by the teacher from the front of the room.
+   IDEA: a night-time tournament field where each rōpū raises a row of castles on its own strip of land.
+   PICTURE: six castles per team growing from a hut-sized tower to a flag-topped fortress; nothing else on that screen.
+   COLOUR and TYPE: deep night indigo, warm limestone castles, each team's colour on roofs, flags and ground. Fredoka + Nunito.
+   LAYOUT: setup → (question) → the arena: one slim bar, then full-width lanes that are all castle. */
+:root{color-scheme:dark;--bg:#121833;--bg2:#1a2147;--ink:#f4f1ea;--mute:#a7acc9;--gold:#ffc83d;--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 80% at 50% 110%,#2a2f66 0%,var(--bg) 55%,#0c1026 100%);color:var(--ink);font:17px/1.5 Nunito,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.disp{font-family:Fredoka,Nunito,sans-serif;font-weight:700;line-height:1.05;margin:0;text-wrap:balance}
+.hidden{display:none!important}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* tactile 3D push buttons */
+.btn{--b:#3b4380;--s:#252b5a;border:0;border-radius:14px;background:var(--b);box-shadow:0 5px 0 var(--s);padding:10px 18px;min-height:44px;font-family:Fredoka,sans-serif;font-weight:600;font-size:17px;transition:transform .06s,box-shadow .06s;display:inline-flex;align-items:center;gap:8px;justify-content:center;white-space:nowrap}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--s)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.gold{--b:var(--gold);--s:#b9861a;color:#2a1d00}
+.btn.ghost{--b:rgba(255,255,255,.08);--s:rgba(0,0,0,.35)}
+.btn.big{font-size:22px;padding:14px 28px;border-radius:18px}
+
+/* setup */
+.setup{max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,56px) max(4vw,16px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;min-height:100vh}
+.hero h1{font-size:clamp(44px,7vw,76px);color:var(--gold)}
+.hero p{color:var(--mute);font-size:19px;max-width:30ch;margin:12px 0 0}
+.hero svg{width:100%;max-width:440px;height:auto;display:block;margin-top:20px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.4))}
+.panel{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:24px;padding:24px;display:grid;gap:18px}
+.panel label,.lbl{font-weight:800;font-size:15px;color:var(--mute)}
+.count{display:flex;gap:8px;flex-wrap:wrap}
+.count button{width:48px;height:48px;border-radius:12px;border:2px solid var(--line);background:transparent;font-family:Fredoka;font-size:20px;font-weight:600}
+.count button[aria-pressed=true]{background:var(--gold);color:#2a1d00;border-color:var(--gold)}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.cats button{min-height:44px;border-radius:999px;border:2px solid var(--line);background:transparent;padding:6px 14px;font-weight:800;font-size:15px}
+.cats button[aria-pressed=true]{background:rgba(255,200,61,.15);border-color:var(--gold);color:var(--gold)}
+.cats button span{opacity:.7;font-weight:700;margin-left:4px}
+.names{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.names div{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.2);border-radius:12px;padding:4px 4px 4px 12px}
+.names i{width:14px;height:14px;border-radius:50%;flex:none}
+input[type=text],textarea{width:100%;background:transparent;border:0;color:var(--ink);font:16px Nunito;padding:10px 6px}
+textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:120px;resize:vertical;font-size:15px}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.chk{display:flex;gap:8px;align-items:center;font-weight:700;color:var(--ink)!important}
+.chk input{width:20px;height:20px;accent-color:var(--gold)}
+.hint{font-size:13px;color:var(--mute);margin:0}
+
+/* question */
+.question{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px max(5vw,16px);gap:28px}
+.question .meta{color:var(--mute);font-weight:800}
+.question h2{font-size:clamp(34px,5.5vw,68px);max-width:20ch}
+.answer{font-family:Fredoka;font-size:clamp(28px,4vw,48px);color:var(--gold);background:rgba(255,200,61,.1);border:2px solid rgba(255,200,61,.4);border-radius:20px;padding:14px 32px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+
+/* arena */
+.arena{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px max(2vw,12px)}
+.bar h2{font-size:22px;color:var(--gold)}
+.bar h2 span{color:var(--mute);font-size:17px;font-weight:600;margin-left:10px}
+.bar .tools{display:flex;gap:8px;flex-wrap:wrap}
+.bar .btn{font-size:15px;padding:8px 14px}
+#lanes{flex:1;min-height:0;display:grid;grid-template-rows:repeat(var(--r1),minmax(0,1fr));padding:0 max(2vw,12px) 12px;gap:10px 28px}
+.lane{display:grid;grid-template-columns:150px minmax(0,1fr) 128px;grid-template-areas:"who slots acts";align-items:stretch;gap:6px 14px;position:relative;min-height:0}
+.who{grid-area:who}.slots{grid-area:slots}.acts{grid-area:acts}
+#lanes.many .acts{gap:6px}#lanes.many .acts .btn{min-height:38px;padding:4px 10px;font-size:15px;box-shadow:0 4px 0 var(--s)}
+#lanes.many .who b{font-size:clamp(16px,1.6vw,22px)}#lanes.many .who small{font-size:13px}
+@media(min-width:701px){
+  #lanes.two{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--r2),minmax(0,1fr))}
+  #lanes.two .lane{grid-template-columns:112px minmax(0,1fr);grid-template-areas:"who slots" "acts slots";grid-template-rows:minmax(0,1fr) auto}
+  #lanes.two .who{justify-content:flex-end}
+  #lanes.two .acts{justify-content:flex-start;padding-bottom:4px}
+}
+.who{display:flex;flex-direction:column;justify-content:center;gap:2px}
+.who b{font-family:Fredoka;font-size:clamp(18px,2vw,26px);color:var(--c);display:flex;align-items:center;gap:6px;line-height:1.1}
+.who b svg{width:24px;height:24px;flex:none}
+.who small{color:var(--mute);font-weight:800;font-size:15px}
+.slots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:minmax(0,1fr);min-height:0;gap:4px;align-items:stretch;border-bottom:5px solid var(--c);position:relative}
+.slot{min-height:0;position:relative}
+.slot svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+.acts{display:flex;flex-direction:column;justify-content:center;gap:10px}
+.acts .btn{font-size:16px;padding:8px 10px;min-height:44px}
+.acts .build{--b:var(--c);--s:var(--cd);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.3)}
+.lane.win .slots{box-shadow:0 10px 40px -10px var(--c)}
+
+.rise{transform-origin:50% 100%;animation:rise .75s cubic-bezier(.2,1.5,.4,1)}
+.fall{transform-origin:50% 100%;animation:fall .85s ease-in forwards}
+.shake{animation:shake .5s}
+.dust{position:absolute;width:10px;height:10px;border-radius:3px;background:#d9d1bf;pointer-events:none;animation:dust .9s ease-out forwards}
+.spark{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--gold);pointer-events:none;animation:dust .8s ease-out forwards}
+@keyframes rise{0%{transform:scaleY(0) scaleX(.6);opacity:0}60%{opacity:1}100%{transform:none}}
+@keyframes fall{0%{transform:none}15%{transform:translateX(-4px) rotate(-2deg)}30%{transform:translateX(4px) rotate(2deg)}100%{transform:translateY(20%) scaleY(.1) rotate(6deg);opacity:0}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-8px,3px)}40%{transform:translate(7px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(3px,-1px)}}
+@keyframes dust{to{transform:translate(var(--dx),var(--dy)) rotate(200deg);opacity:0}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:none}}
+
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(6,8,22,.78);display:grid;place-items:center;z-index:20;padding:16px;backdrop-filter:blur(6px)}
+.card{background:var(--bg2);border:3px solid var(--gold);border-radius:28px;padding:32px;text-align:center;max-width:560px;width:100%;display:grid;gap:18px;justify-items:center;animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
+.card h2{font-size:clamp(36px,6vw,56px)}
+.card p{margin:0;color:var(--mute);font-size:18px}
+.card svg{width:min(260px,60vw);height:auto}
+.card .row{justify-content:center}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
+
+@media(max-width:820px){.setup{grid-template-columns:1fr;min-height:0}.hero svg{max-width:300px}}
+@media(max-width:700px){
+  .arena{height:auto;min-height:100dvh;overflow:visible}
+  #lanes{grid-template-rows:none!important;grid-auto-rows:minmax(150px,auto)}
+  .lane,#lanes.many .lane{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who acts" "slots slots";grid-template-rows:auto minmax(110px,1fr)}
+  .who{flex-direction:row;align-items:baseline;gap:10px}
+  .acts{flex-direction:row}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: SETUP -->
+<section id="setup-screen" class="setup">
+  <div class="hero">
+    <h1>The Castle Game</h1>
+    <p><span id="bank-name">Aotearoa Edition</span>. Answer right, then make a castle — or break a rival's. First rōpū to six castles wins.</p>
+    <div id="hero-castle"></div>
+  </div>
+  <form class="panel" id="setup-form">
+    <div>
+      <div class="lbl">How many rōpū?</div>
+      <div class="count" id="count"></div>
+    </div>
+    <div>
+      <div class="lbl">Team names</div>
+      <div class="names" id="names"></div>
+    </div>
+    <div>
+      <div class="lbl">Question bank</div>
+      <div class="cats" id="banks" style="margin-bottom:14px"></div>
+      <div class="lbl">Categories</div>
+      <div class="cats" id="cats"></div>
+      <p class="hint" id="cat-hint"></p>
+    </div>
+    <div>
+      <label for="qs">Add your own questions (optional)</label>
+      <textarea id="qs" placeholder="What is 7 × 8? | 56&#10;Name a kai you'd find at a hāngī | Kūmara, pork, chicken…"></textarea>
+      <p class="hint">One per line, answer after a |. These join the categories you pick above.</p>
+    </div>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="shuffle" checked> Shuffle questions</label>
+      <label class="chk"><input type="checkbox" id="sound" checked> Sound</label>
+    </div>
+    <button class="btn gold big" type="submit">Start the battle</button>
+  </form>
+</section>
+
+<!-- SCREEN 2: QUESTION -->
+<section id="question-screen" class="question hidden">
+  <div class="meta" id="q-meta"></div>
+  <h2 id="q-text"></h2>
+  <div class="answer hidden" id="q-answer"></div>
+  <div class="row" style="justify-content:center">
+    <button class="btn ghost big" id="reveal-btn">Reveal answer</button>
+    <button class="btn gold big" id="to-castles">To the castles</button>
+  </div>
+</section>
+
+<!-- SCREEN 3: THE CASTLES ARENA -->
+<main id="castles-screen" class="arena hidden">
+  <div class="bar">
+    <h2>The Castle Game<span id="round-label"></span></h2>
+    <div class="tools">
+      <button class="btn ghost" id="peek-btn">Question</button>
+      <button class="btn ghost" id="undo-btn">Undo</button>
+      <button class="btn ghost" id="mute-btn">Sound on</button>
+      <button class="btn ghost" id="menu-btn">Menu</button>
+      <button class="btn gold" id="next-btn">Next question</button>
+    </div>
+  </div>
+  <div id="lanes"></div>
+</main>
+
+<!-- MODAL: VICTORY -->
+<div id="victory" class="modal hidden">
+  <div class="card">
+    <div id="v-castle"></div>
+    <h2 id="v-title"></h2>
+    <p>Six castles raised. The kingdom is theirs.</p>
+    <div class="row">
+      <button class="btn ghost" id="v-undo">Undo last make</button>
+      <button class="btn ghost" id="v-setup">New setup</button>
+      <button class="btn gold" id="v-again">Play again</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: LEAVE -->
+<div id="leave" class="modal hidden">
+  <div class="card">
+    <h2>Leave this game?</h2>
+    <p>The castles will be lost.</p>
+    <div class="row">
+      <button class="btn ghost" id="l-stay">Keep playing</button>
+      <button class="btn gold" id="l-go">Back to setup</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+{
+const COLORS=[["#e5484d","#9e2a2e"],["#3e8bff","#1f55ad"],["#30a46c","#1b6b45"],["#f08c00","#a35e00"],["#9d5bd2","#64338c"],["#12a5a5","#0b6b6b"]];
+const DEFAULT_NAMES=["Kahu","Tūī","Kererū","Kea","Pīwakawaka","Ruru"];
+const WIN=6;
+const BANKS=[{"name": "Aotearoa Edition", "cats": ["NZ Geography", "Te Reo Māori", "Native Birds & Wildlife", "NZ History", "Kiwi Culture & Sport", "Easy General Knowledge"], "qs": [{"c": 0, "q": "What is the capital city of New Zealand?", "a": "Wellington (Te Whanganui-a-Tara)"}, {"c": 0, "q": "What is the Māori name for Mount Cook, New Zealand's highest mountain?", "a": "Aoraki (3,724 metres)"}, {"c": 0, "q": "Which New Zealand lake is the largest by surface area?", "a": "Lake Taupō (Taupō-nui-a-Tia)"}, {"c": 0, "q": "What is the name of the stretch of water separating the North and South Islands?", "a": "Cook Strait (Te Moana-o-Raukawa)"}, {"c": 0, "q": "What is the longest river in New Zealand?", "a": "Waikato River (425 km)"}, {"c": 0, "q": "What is the Māori name for the South Island?", "a": "Te Waipounamu"}, {"c": 0, "q": "What is the Māori name for the North Island?", "a": "Te Ika-a-Māui"}, {"c": 0, "q": "Which New Zealand city is famous as the 'City of Sails'?", "a": "Auckland (Tāmaki Makaurau)"}, {"c": 0, "q": "In which NZ city is Baldwin Street, famous as one of the world's steepest residential streets?", "a": "Dunedin (Ōtepoti)"}, {"c": 0, "q": "Which mountain range runs like a backbone down the length of the South Island?", "a": "The Southern Alps (Kā Tiritiri o te Moana)"}, {"c": 0, "q": "In which region would you find Milford Sound (Piopiotahi)?", "a": "Fiordland / Southland"}, {"c": 0, "q": "Which North Island city is famous for its bubbling mud pools, geysers, and geothermal hot springs?", "a": "Rotorua"}, {"c": 1, "q": "What does the Te Reo Māori greeting 'Ata mārie' mean in English?", "a": "Good morning"}, {"c": 1, "q": "What is the Te Reo Māori word for 'family' or 'extended family'?", "a": "Whānau"}, {"c": 1, "q": "Translate the Te Reo Māori number 'Tekau' into English.", "a": "Ten (10)"}, {"c": 1, "q": "What colour is 'Kākāriki'?", "a": "Green"}, {"c": 1, "q": "What does 'Kia kaha' mean?", "a": "Be strong / Stay strong"}, {"c": 1, "q": "What is the Te Reo Māori word for 'water'?", "a": "Wai"}, {"c": 1, "q": "If someone asks 'Kei te pēhea koe?', what are they asking you?", "a": "How are you?"}, {"c": 1, "q": "What is the Te Reo Māori word for 'mountain'?", "a": "Maunga"}, {"c": 1, "q": "What does 'Aotearoa' translate to in English?", "a": "Land of the Long White Cloud"}, {"c": 1, "q": "What is the Te Reo Māori word for 'food'?", "a": "Kai"}, {"c": 1, "q": "What colour is 'Whero'?", "a": "Red"}, {"c": 1, "q": "What is the name of the Māori New Year celebrated when the star cluster rises in mid-winter?", "a": "Matariki"}, {"c": 2, "q": "Which flightless nocturnal bird is New Zealand's national icon?", "a": "Kiwi"}, {"c": 2, "q": "Which native NZ parrot is famous as the world's only alpine parrot?", "a": "Kea"}, {"c": 2, "q": "Which native NZ bird has a distinctive white tuft on its throat and two voice boxes?", "a": "Tūī"}, {"c": 2, "q": "Which native reptile is known as a 'living fossil' and has a third parietal eye on top of its head?", "a": "Tuatara"}, {"c": 2, "q": "Which giant, heavy, flightless native parrot is nocturnal and critically endangered?", "a": "Kākāpō"}, {"c": 2, "q": "What is the world's smallest species of penguin, found along New Zealand's coastline?", "a": "Little Blue Penguin (Kororā)"}, {"c": 2, "q": "Which large native wood pigeon is famous for its iridescent green and bronze feathers and noisy wingbeats?", "a": "Kererū"}, {"c": 2, "q": "What is the world's rarest marine dolphin, found only around New Zealand's North Island?", "a": "Māui dolphin"}, {"c": 2, "q": "Which native New Zealand tree is called the 'New Zealand Christmas Tree' for its bright red December flowers?", "a": "Pōhutukawa"}, {"c": 2, "q": "Which giant extinct flightless bird once roamed New Zealand and could grow over 3.5 metres tall?", "a": "Moa"}, {"c": 3, "q": "In what year was Te Tiriti o Waitangi (The Treaty of Waitangi) first signed?", "a": "1840 (6 February)"}, {"c": 3, "q": "New Zealand was the first country in the world to grant women the right to vote. In what year did this happen?", "a": "1893"}, {"c": 3, "q": "Who led the women's suffrage campaign in New Zealand and appears on the $10 note?", "a": "Kate Sheppard"}, {"c": 3, "q": "Which New Zealander became one of the first two climbers to reach the summit of Mount Everest in 1953?", "a": "Sir Edmund Hillary (alongside Tenzing Norgay)"}, {"c": 3, "q": "Who is the legendary Polynesian navigator credited in Māori tradition with discovering Aotearoa?", "a": "Kupe"}, {"c": 3, "q": "Who was the first European explorer to sight New Zealand in 1642?", "a": "Abel Tasman"}, {"c": 3, "q": "Which Nelson-born New Zealand physicist won the Nobel Prize and is known as the father of nuclear physics?", "a": "Ernest Rutherford (appears on the $100 note)"}, {"c": 3, "q": "What annual day of remembrance on 25 April honours New Zealand and Australian soldiers?", "a": "ANZAC Day"}, {"c": 4, "q": "How many stars appear on the New Zealand flag?", "a": "Four red stars with white borders (Southern Cross)"}, {"c": 4, "q": "What are the three official languages of New Zealand?", "a": "Te Reo Māori, New Zealand Sign Language (NZSL), and English"}, {"c": 4, "q": "What is the name of New Zealand's national netball team?", "a": "The Silver Ferns"}, {"c": 4, "q": "What is the traditional Māori haka most commonly performed by the All Blacks?", "a": "Ka Mate (composed by Te Rauparaha)"}, {"c": 4, "q": "Which New Zealand town is famous for its giant L&P bottle statue?", "a": "Paeroa"}, {"c": 4, "q": "Which famous fantasy film trilogy was filmed across more than 150 locations in New Zealand?", "a": "The Lord of the Rings"}, {"c": 4, "q": "Which New Zealand sportsperson won back-to-back Olympic gold medals in the shot put in 2008 and 2012?", "a": "Dame Valerie Adams"}, {"c": 4, "q": "What iconic Kiwi sweet consists of a chewy pineapple-flavoured marshmallow coated in chocolate?", "a": "Pineapple Lumps"}, {"c": 5, "q": "How many days are there in a leap year?", "a": "366"}, {"c": 5, "q": "How many legs does a spider have?", "a": "Eight"}, {"c": 5, "q": "What is the largest planet in our solar system?", "a": "Jupiter"}, {"c": 5, "q": "Which planet is known as the Red Planet?", "a": "Mars"}, {"c": 5, "q": "What is the largest animal that has ever lived?", "a": "The blue whale"}, {"c": 5, "q": "How many continents are there in the world?", "a": "Seven"}, {"c": 5, "q": "What colour do you get when you mix blue and yellow?", "a": "Green"}, {"c": 5, "q": "What is the hardest natural substance on Earth?", "a": "Diamond"}, {"c": 5, "q": "Which organ pumps blood around your body?", "a": "The heart"}, {"c": 5, "q": "What is 12 × 12?", "a": "144"}, {"c": 5, "q": "Which musical instrument usually has 88 black and white keys?", "a": "The piano"}, {"c": 5, "q": "How many players are on the field for one rugby union team?", "a": "Fifteen"}, {"c": 5, "q": "What sweet, sticky food do bees make?", "a": "Honey"}, {"c": 5, "q": "What is the closest star to Earth?", "a": "The Sun"}, {"c": 5, "q": "In which sport would you hit a shuttlecock?", "a": "Badminton"}, {"c": 5, "q": "At what temperature in °C does water freeze?", "a": "0 °C"}, {"c": 5, "q": "At what temperature in °C does water boil at sea level?", "a": "100 °C"}, {"c": 5, "q": "How many bones are in the adult human body?", "a": "206"}, {"c": 5, "q": "What is the name of the force that pulls things down towards the ground?", "a": "Gravity"}, {"c": 5, "q": "How many strings does a standard guitar have?", "a": "Six"}, {"c": 5, "q": "What does a caterpillar turn into?", "a": "A butterfly or a moth"}, {"c": 5, "q": "Which month of the year has the fewest days?", "a": "February"}, {"c": 5, "q": "How many colours are there in a rainbow?", "a": "Seven"}, {"c": 5, "q": "What is H₂O better known as?", "a": "Water"}, {"c": 5, "q": "What gas do plants take in from the air to make their food?", "a": "Carbon dioxide"}]}, {"name": "Year 7 & 8 Edition", "cats": ["Aotearoa NZ Geography & History", "World Geography & History", "Easy General Knowledge"], "qs": [{"c": 0, "q": "What is the capital city of New Zealand?", "a": "Wellington (Te Whanganui-a-Tara)"}, {"c": 0, "q": "What is the Māori name for Mount Cook, New Zealand's highest mountain?", "a": "Aoraki"}, {"c": 0, "q": "Which New Zealand lake is the largest by surface area?", "a": "Lake Taupō (Taupō-nui-a-Tia)"}, {"c": 0, "q": "What is the name of the stretch of water separating the North and South Islands?", "a": "Cook Strait (Te Moana-o-Raukawa)"}, {"c": 0, "q": "What is the longest river in New Zealand?", "a": "Waikato River"}, {"c": 0, "q": "What is the Māori name for the South Island?", "a": "Te Waipounamu"}, {"c": 0, "q": "What is the Māori name for the North Island?", "a": "Te Ika-a-Māui"}, {"c": 0, "q": "Which New Zealand city is famous as the 'City of Sails'?", "a": "Auckland (Tāmaki Makaurau)"}, {"c": 0, "q": "Which mountain range runs like a backbone down the length of the South Island?", "a": "The Southern Alps (Kā Tiritiri o te Moana)"}, {"c": 0, "q": "In which region would you find the famous fiord, Milford Sound (Piopiotahi)?", "a": "Fiordland / Southland"}, {"c": 0, "q": "In what year was Te Tiriti o Waitangi (The Treaty of Waitangi) first signed?", "a": "1840"}, {"c": 0, "q": "New Zealand was the first country in the world to grant women the right to vote. In what year did this happen?", "a": "1893"}, {"c": 0, "q": "Who led the women's suffrage campaign in New Zealand and appears on the $10 note?", "a": "Kate Sheppard"}, {"c": 0, "q": "Which New Zealander became one of the first two climbers to reach the summit of Mount Everest in 1953?", "a": "Sir Edmund Hillary"}, {"c": 0, "q": "Who is the legendary Polynesian navigator credited in Māori tradition with discovering Aotearoa?", "a": "Kupe"}, {"c": 0, "q": "Who was the first European explorer to sight New Zealand in 1642?", "a": "Abel Tasman"}, {"c": 0, "q": "What does the name 'Aotearoa' translate to in English?", "a": "Land of the Long White Cloud"}, {"c": 0, "q": "What annual day of remembrance on 25 April honours New Zealand and Australian soldiers?", "a": "ANZAC Day"}, {"c": 0, "q": "Which Taranaki settlement became famous in the 1880s for its campaign of non-violent resistance against land confiscations?", "a": "Parihaka"}, {"c": 0, "q": "Which two major tectonic plates meet and grind together right under New Zealand?", "a": "The Pacific Plate and the Australian Plate"}, {"c": 0, "q": "What was the first capital of New Zealand before it was moved to Auckland and then Wellington?", "a": "Russell (Okiato)"}, {"c": 0, "q": "Which vast ocean lies to the east of New Zealand?", "a": "The Pacific Ocean"}, {"c": 0, "q": "What is the name of the sea that lies directly between New Zealand and Australia?", "a": "The Tasman Sea"}, {"c": 0, "q": "Which natural disaster destroyed the famous Pink and White Terraces in 1886?", "a": "The eruption of Mount Tarawera"}, {"c": 0, "q": "How many stars appear on the New Zealand flag, representing the Southern Cross?", "a": "Four"}, {"c": 1, "q": "Which is the largest continent in the world by land area?", "a": "Asia"}, {"c": 1, "q": "What is generally considered the longest river in the world, flowing through Egypt?", "a": "The Nile River"}, {"c": 1, "q": "What is the tallest mountain in the world above sea level?", "a": "Mount Everest"}, {"c": 1, "q": "Which ancient civilisation is famous for building the Pyramids of Giza?", "a": "Ancient Egypt"}, {"c": 1, "q": "What is the capital city of Australia?", "a": "Canberra"}, {"c": 1, "q": "Which ocean separates Europe and North America?", "a": "The Atlantic Ocean"}, {"c": 1, "q": "Which massive ancient empire was ruled by leaders like Julius Caesar and Augustus?", "a": "The Roman Empire"}, {"c": 1, "q": "What is the name of the period in the 18th and 19th centuries when machines and factories began to replace hand-made goods?", "a": "The Industrial Revolution"}, {"c": 1, "q": "Which line of latitude runs exactly around the centre of the Earth?", "a": "The Equator"}, {"c": 1, "q": "Which famous, massive structure was built across the historical northern borders of China for protection and defence?", "a": "The Great Wall of China"}, {"c": 1, "q": "On which continent is the Sahara Desert located?", "a": "Africa"}, {"c": 1, "q": "Which major global conflict lasted from 1939 to 1945?", "a": "World War Two"}, {"c": 1, "q": "What is the capital city of Japan?", "a": "Tokyo"}, {"c": 1, "q": "Which ancient civilisation is known for inventing democracy and the Olympic Games?", "a": "Ancient Greece"}, {"c": 1, "q": "What is the smallest continent in the world by landmass?", "a": "Oceania / Australia"}, {"c": 1, "q": "Which famous river runs through the centre of London?", "a": "The River Thames"}, {"c": 1, "q": "Which prehistoric monument in England is made up of a ring of massive standing stones?", "a": "Stonehenge"}, {"c": 1, "q": "Which is the coldest, driest, and windiest continent on Earth?", "a": "Antarctica"}, {"c": 1, "q": "Which famous European artist and inventor painted the Mona Lisa?", "a": "Leonardo da Vinci"}, {"c": 1, "q": "What is the scientific theory that explains how the Earth's outer shell is divided into large slabs that glide over the mantle?", "a": "Plate Tectonics (or Continental Drift)"}, {"c": 1, "q": "What is the capital city of the United States of America?", "a": "Washington, D.C."}, {"c": 1, "q": "The crew of which European explorer led the first expedition to successfully circumnavigate (sail completely around) the globe?", "a": "Ferdinand Magellan"}, {"c": 1, "q": "Which massive South American rainforest produces a significant portion of the world's oxygen?", "a": "The Amazon Rainforest"}, {"c": 1, "q": "Which sovereign state consists of four countries: England, Scotland, Wales, and Northern Ireland?", "a": "The United Kingdom"}, {"c": 1, "q": "Which famous ship sank in the Atlantic Ocean in 1912 after striking an iceberg on its first voyage?", "a": "The RMS Titanic"}, {"c": 2, "q": "How many days are there in a leap year?", "a": "366"}, {"c": 2, "q": "How many legs does a spider have?", "a": "Eight"}, {"c": 2, "q": "What is the largest planet in our solar system?", "a": "Jupiter"}, {"c": 2, "q": "Which planet is known as the Red Planet?", "a": "Mars"}, {"c": 2, "q": "What is the largest animal that has ever lived?", "a": "The blue whale"}, {"c": 2, "q": "How many continents are there in the world?", "a": "Seven"}, {"c": 2, "q": "What colour do you get when you mix blue and yellow?", "a": "Green"}, {"c": 2, "q": "What is the hardest natural substance on Earth?", "a": "Diamond"}, {"c": 2, "q": "Which organ pumps blood around your body?", "a": "The heart"}, {"c": 2, "q": "What is 12 × 12?", "a": "144"}, {"c": 2, "q": "Which musical instrument usually has 88 black and white keys?", "a": "The piano"}, {"c": 2, "q": "How many players are on the field for one rugby union team?", "a": "Fifteen"}, {"c": 2, "q": "What sweet, sticky food do bees make?", "a": "Honey"}, {"c": 2, "q": "What is the closest star to Earth?", "a": "The Sun"}, {"c": 2, "q": "In which sport would you hit a shuttlecock?", "a": "Badminton"}, {"c": 2, "q": "At what temperature in °C does water freeze?", "a": "0 °C"}, {"c": 2, "q": "At what temperature in °C does water boil at sea level?", "a": "100 °C"}, {"c": 2, "q": "How many bones are in the adult human body?", "a": "206"}, {"c": 2, "q": "What is the name of the force that pulls things down towards the ground?", "a": "Gravity"}, {"c": 2, "q": "How many strings does a standard guitar have?", "a": "Six"}, {"c": 2, "q": "What does a caterpillar turn into?", "a": "A butterfly or a moth"}, {"c": 2, "q": "Which month of the year has the fewest days?", "a": "February"}, {"c": 2, "q": "How many colours are there in a rainbow?", "a": "Seven"}, {"c": 2, "q": "What is H₂O better known as?", "a": "Water"}, {"c": 2, "q": "What gas do plants take in from the air to make their food?", "a": "Carbon dioxide"}]}];
+
+const $=id=>document.getElementById(id);
+const S={bank:0,cats:[0,1,2,3,4,5],count:4,names:[...DEFAULT_NAMES],teams:[],round:1,qi:0,questions:[],sound:true,history:[],over:false};
+
+/* ---------- remembered setup ---------- */
+try{const m=JSON.parse(localStorage.getItem("castles-setup")||"null");if(m){S.count=m.count||4;S.names=m.names||S.names;if(BANKS[m.bank])S.bank=m.bank;if(Array.isArray(m.cats))S.cats=m.cats.filter(c=>c<BANKS[S.bank].cats.length);if(m.shuffle===false)$("shuffle").checked=false;$("qs").value=m.qs||"";}}catch(e){}
+function remember(){try{localStorage.setItem("castles-setup",JSON.stringify({bank:S.bank,cats:S.cats,count:S.count,names:S.names,qs:$("qs").value,shuffle:$("shuffle").checked}))}catch(e){}}
+
+/* =========================================================================
+   DRAMATIC SOUND ENGINE — compressor + big-hall reverb on everything
+   ========================================================================= */
+let actx,master,verbIn,noiseBuf;
+function audio(){
+  if(!actx){
+    actx=new (window.AudioContext||window.webkitAudioContext)();
+    const comp=actx.createDynamicsCompressor();
+    comp.threshold.value=-16;comp.ratio.value=5;comp.attack.value=.003;comp.release.value=.3;
+    master=actx.createGain();master.gain.value=.95;master.connect(comp);comp.connect(actx.destination);
+    const len=actx.sampleRate*3.4,ir=actx.createBuffer(2,len,actx.sampleRate);
+    for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8);}
+    const conv=actx.createConvolver();conv.buffer=ir;
+    verbIn=actx.createGain();verbIn.connect(conv);
+    const wet=actx.createGain();wet.gain.value=.6;conv.connect(wet);wet.connect(master);
+    noiseBuf=actx.createBuffer(1,actx.sampleRate*3,actx.sampleRate);
+    const nd=noiseBuf.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+  }
+  if(actx.state==="suspended")actx.resume();
+  return actx;
+}
+function route(node,wet){node.connect(master);if(wet>0){const s=actx.createGain();s.gain.value=wet;node.connect(s);s.connect(verbIn);}}
+function env(g,t,vol,att,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+att);g.gain.exponentialRampToValueAtTime(.0001,t+dur);}
+function filt(type,t,dur,o){const f=actx.createBiquadFilter();f.type=type;f.Q.value=o.q||1;f.frequency.setValueAtTime(o.f0,t);
+  if(o.f2){f.frequency.exponentialRampToValueAtTime(o.f1,t+(o.fAt||dur*.3));f.frequency.exponentialRampToValueAtTime(o.f2,t+dur);}
+  else if(o.f1)f.frequency.exponentialRampToValueAtTime(o.f1,t+dur);return f;}
+function tone(freq,t,dur,vol,o={}){
+  const osc=actx.createOscillator(),g=actx.createGain();
+  osc.type=o.type||"sine";osc.frequency.setValueAtTime(freq,t);
+  if(o.to)osc.frequency.exponentialRampToValueAtTime(o.to,t+(o.glide||dur));
+  let n=osc;if(o.f0){const f=filt("lowpass",t,dur,o);osc.connect(f);n=f;}
+  n.connect(g);env(g,t,vol,o.att||.008,dur);route(g,o.wet??.3);
+  osc.start(t);osc.stop(t+dur+.05);
+}
+function noise(t,dur,vol,o={}){
+  const src=actx.createBufferSource();src.buffer=noiseBuf;
+  const f=filt(o.ft||"lowpass",t,dur,{f0:o.f0||2000,f1:o.f1,f2:o.f2,fAt:o.fAt,q:o.q});
+  let n=src;
+  if(o.dist){const ws=actx.createWaveShaper(),c=new Float32Array(512);for(let i=0;i<512;i++){const x=i/256-1;c[i]=Math.tanh(x*6);}ws.curve=c;src.connect(ws);n=ws;}
+  n.connect(f);const g=actx.createGain();f.connect(g);env(g,t,vol,o.att||.005,dur);route(g,o.wet??.3);
+  src.start(t,Math.random()*.5);src.stop(t+dur+.05);
+}
+const SFX={
+  reveal(t){ // snare roll that accelerates, then a cymbal + shimmering chord
+    let x=0;for(let i=0;i<16;i++){noise(t+x,.08,.12+i*.03,{ft:"bandpass",f0:1900,f1:1300,q:.9,wet:.15});tone(160,t+x,.07,.1+i*.02,{to:100});x+=.07-i*.0033;}
+    const h=t+x+.04;
+    tone(70,h,.9,1,{to:38});noise(h,.25,.7,{f0:1500,f1:100});
+    noise(h,2.6,.45,{ft:"highpass",f0:5500,f1:8000,wet:.55});
+    [523.25,659.25,783.99,1046.5].forEach((f,i)=>{tone(f,h,2.2,.16,{type:"triangle",wet:.7});tone(f*2,h+i*.07,1.6,.05,{wet:.8});});
+  },
+  build(t){ // ground-thump, rising brass swell, glittering arpeggio
+    tone(170,t,.5,1,{to:42});noise(t,.4,.7,{f0:1200,f1:70,wet:.3});
+    noise(t,.5,.25,{ft:"bandpass",f0:400,f1:3000,q:1.5,wet:.4});
+    [130.81,196,261.63,329.63,392].forEach(f=>{
+      tone(f,t+.05,1.9,.13,{type:"sawtooth",att:.05,f0:250,f1:4800,f2:700,fAt:.22,wet:.5});
+      tone(f*1.006,t+.05,1.9,.09,{type:"sawtooth",att:.05,f0:250,f1:4800,f2:700,fAt:.22,wet:.5});
+    });
+    tone(65.4,t+.05,1.7,.5,{type:"triangle",wet:.2});
+    [523.25,659.25,783.99,1046.5,1318.5,1568].forEach((f,i)=>tone(f,t+.22+i*.065,.9,.11,{type:"triangle",wet:.7}));
+  },
+  whoosh(t){ // big airy sweep past the ear
+    noise(t,.85,.9,{ft:"bandpass",f0:220,f1:3800,f2:260,fAt:.38,q:2.2,att:.32,wet:.45});
+    tone(1100,t,.8,.18,{to:110,att:.25,wet:.4});
+    tone(80,t+.38,.5,.6,{to:40});
+  },
+  boom(t){ // cannon crack, sub drop, crumbling rubble
+    noise(t,.14,1,{ft:"highpass",f0:2500,f1:900,wet:.35});
+    tone(130,t,2.6,1,{to:20,glide:1.8,wet:.45});
+    tone(58,t,2,.65,{type:"square",to:18,glide:1.5,f0:700,f1:70,wet:.25});
+    noise(t,3,1,{f0:4500,f1:55,dist:true,wet:.65});
+    tone(38,t+.12,2.8,.55,{wet:0});
+    for(let i=0;i<12;i++){const d=.22+Math.random()*1.5;noise(t+d,.05+Math.random()*.09,.08+.3*(1-d/1.8),{ft:"bandpass",f0:500+Math.random()*2800,f1:350,q:3,wet:.45});}
+  },
+  victory(t){ // timpani roll → crash → booming fanfare → final crash
+    for(let i=0,x=0;i<18;i++){tone(98,t+x,.3,.15+i*.045,{to:88,wet:.4});x+=.06;}
+    const c=t+1.1;
+    tone(65,c,1.4,1,{to:35,wet:.5});noise(c,3,.6,{ft:"highpass",f0:4000,f1:7000,wet:.6});
+    [{f:392,s:0,d:.25},{f:392,s:.3,d:.25},{f:392,s:.6,d:.25},{f:523.25,s:.9,d:.8},{f:392,s:1.8,d:.3},{f:523.25,s:2.1,d:2.2},{f:659.25,s:2.1,d:2.2},{f:783.99,s:2.1,d:2.2}].forEach(n=>{
+      [1,1.006,.994].forEach(dt=>tone(n.f*dt,c+n.s,n.d,.1,{type:"sawtooth",att:.03,f0:900,f1:4000,f2:700,fAt:.1,wet:.55}));
+      tone(n.f/2,c+n.s,n.d,.14,{type:"square",f0:600,f1:300,wet:.4});
+      tone(n.f/4,c+n.s,n.d,.3,{type:"triangle",wet:.3});
+    });
+    const e=c+2.1;tone(55,e,2,1,{to:30,wet:.6});noise(e,3,.7,{ft:"highpass",f0:3500,f1:7500,wet:.7});
+    for(let i=0;i<10;i++)tone(98,e+.1+i*.07,.3,.25,{to:90,wet:.4});
+  },
+  undo(t){tone(700,t,.25,.2,{to:300,type:"triangle",wet:.3});}
+};
+function play(name){if(!S.sound)return;try{audio();SFX[name](actx.currentTime+.02);}catch(e){}}
+
+/* =========================================================================
+   6-TIER PROGRESSIVE CASTLE SVG
+   ========================================================================= */
+const STONE="#ebe4d3",SHADE="#c9bfa8",DARK="#2a2340";
+function block(x,y,w,h){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${STONE}"/><rect x="${x+w*.68}" y="${y}" width="${w*.32}" height="${h}" fill="${SHADE}"/>`+crenel(x,y,w);}
+function crenel(x,y,w){let s="";const n=Math.max(2,Math.round(w/7));const step=w/n;for(let i=0;i<n;i+=2)s+=`<rect x="${x+i*step}" y="${y-4}" width="${step}" height="4.5" fill="${i*step>w*.66?SHADE:STONE}"/>`;return s;}
+function flag(x,y,c,big){const h=big?11:8;return `<line x1="${x}" y1="${y}" x2="${x}" y2="${y-h-6}" stroke="${DARK}" stroke-width="1.4"/><path d="M${x} ${y-h-6} l${h*1.3} ${h*.35} l-${h*1.3} ${h*.35}z" fill="${c}"/>`;}
+function cone(x,y,w,c,cd){return `<path d="M${x-2} ${y} L${x+w/2} ${y-w*1.15} L${x+w+2} ${y}z" fill="${c}"/><path d="M${x+w/2} ${y-w*1.15} L${x+w+2} ${y} L${x+w*.62} ${y}z" fill="${cd}"/>`;}
+function castleSVG(tier,c,cd){
+  const G=114,W=38+tier*11,Hw=16+tier*5,wx=60-W/2,wy=G-Hw;
+  const Kw=16+tier*3,Hk=Hw+16+tier*6,kx=60-Kw/2,ky=G-Hk;
+  let s="";
+  if(tier>=2){const Tw=11+tier*1.6,Ht=Hw+10+tier*3.4,ty=G-Ht;
+    [wx-3,wx+W-Tw+3].forEach(tx=>{s+=block(tx,ty,Tw,Ht)+`<rect x="${tx+Tw/2-1.5}" y="${ty+8}" width="3" height="6" rx="1.5" fill="${DARK}"/>`;
+      if(tier>=5)s+=cone(tx,ty-4,Tw,c,cd);else if(tier>=4)s+=flag(tx+Tw/2,ty-4,c);});
+  }
+
+  const wall=block(wx,wy,W,Hw);
+  let keep=block(kx,ky,Kw,Hk);
+  for(let i=0;i<Math.min(3,Math.floor(tier/2)+1);i++)keep+=`<rect x="${kx+Kw/2-2}" y="${ky+8+i*12}" width="4" height="7" rx="2" fill="${DARK}"/>`;
+  if(tier>=6)keep+=cone(kx,ky-4,Kw,c,cd)+`<circle cx="${kx+Kw/2}" cy="${ky-4-Kw*1.15-4}" r="4" fill="#ffc83d"/>`;
+  else keep+=flag(kx+Kw/2,ky-4,c,tier>=3);
+  const gw=9+tier*1.4,gh=Hw*.62;
+  const gate=`<path d="M${60-gw/2} ${G} v-${gh-gw/2} a${gw/2} ${gw/2} 0 0 1 ${gw} 0 v${gh-gw/2}z" fill="${DARK}"/>`;
+  const banner=tier>=3?`<path d="M${wx+6} ${wy+4} h7 v${8+tier} l-3.5 -3 l-3.5 3z" fill="${c}"/><path d="M${wx+W-13} ${wy+4} h7 v${8+tier} l-3.5 -3 l-3.5 3z" fill="${c}"/>`:"";
+  const glow=tier>=6?`<ellipse cx="60" cy="${G-40}" rx="62" ry="58" fill="url(#gl)"/>`:"";
+  return `<svg viewBox="0 0 120 118" preserveAspectRatio="xMidYMax meet" aria-label="Castle tier ${tier}">
+    <defs><radialGradient id="gl"><stop offset="0" stop-color="#ffc83d" stop-opacity=".35"/><stop offset="1" stop-color="#ffc83d" stop-opacity="0"/></radialGradient></defs>
+    ${glow}<ellipse cx="60" cy="${G+1}" rx="${W/2+8}" ry="3" fill="rgba(0,0,0,.35)"/>${keep}${s}${wall}${banner}${gate}</svg>`;
+}
+function emptySVG(tier){const W=38+tier*11;return `<svg viewBox="0 0 120 118" preserveAspectRatio="xMidYMax meet" aria-label="Empty plot"><rect x="${60-W/2}" y="104" width="${W}" height="10" rx="3" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-dasharray="4 3"/></svg>`;}
+const CROWN=`<svg viewBox="0 0 24 24"><path d="M3 18 L2 7 L8 11 L12 4 L16 11 L22 7 L21 18z" fill="#ffc83d"/><rect x="3" y="18.5" width="18" height="2.5" rx="1" fill="#e0a520"/></svg>`;
+
+/* ---------- setup screen ---------- */
+function renderSetup(){
+  $("count").innerHTML=[2,3,4,5,6].map(n=>`<button type="button" data-n="${n}" aria-pressed="${n===S.count}">${n}</button>`).join("");
+  $("names").innerHTML=S.names.slice(0,S.count).map((nm,i)=>`<div><i style="background:${COLORS[i][0]}"></i><input type="text" data-i="${i}" value="${nm.replace(/"/g,"&quot;")}" aria-label="Team ${i+1} name" maxlength="18"></div>`).join("");
+  const B=BANKS[S.bank];
+  $("bank-name").textContent=B.name;
+  $("banks").innerHTML=BANKS.map((b,i)=>`<button type="button" data-b="${i}" aria-pressed="${i===S.bank}">${b.name}<span>${b.qs.length}</span></button>`).join("");
+  $("cats").innerHTML=B.cats.map((c,i)=>`<button type="button" data-c="${i}" aria-pressed="${S.cats.includes(i)}">${c}<span>${B.qs.filter(b=>b.c===i).length}</span></button>`).join("");
+  const n=B.qs.filter(b=>S.cats.includes(b.c)).length;
+  $("cat-hint").textContent=n?`${n} questions ready.`:"No categories picked — the game will use only your own questions, or you can ask them aloud.";
+  $("hero-castle").innerHTML=castleSVG(6,"#ffc83d","#c9931c");
+}
+$("count").addEventListener("click",e=>{const n=+e.target.dataset.n;if(n){S.count=n;renderSetup();remember();}});
+$("names").addEventListener("input",e=>{const i=e.target.dataset.i;if(i!=null){S.names[i]=e.target.value;remember();}});
+$("banks").addEventListener("click",e=>{const b=e.target.closest("button[data-b]");if(!b)return;S.bank=+b.dataset.b;S.cats=BANKS[S.bank].cats.map((_,i)=>i);renderSetup();remember();});
+$("cats").addEventListener("click",e=>{const b=e.target.closest("button[data-c]");if(!b)return;const c=+b.dataset.c;S.cats=S.cats.includes(c)?S.cats.filter(x=>x!==c):[...S.cats,c].sort();renderSetup();remember();});
+$("qs").addEventListener("input",remember);$("shuffle").addEventListener("change",remember);
+
+$("setup-form").addEventListener("submit",e=>{
+  e.preventDefault();audio();
+  S.sound=$("sound").checked;
+  const B=BANKS[S.bank];S.questions=B.qs.filter(b=>S.cats.includes(b.c)).map(b=>({q:b.q,a:b.a,cat:B.cats[b.c]})).concat($("qs").value.split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const [q,...a]=l.split("|");return {q:q.trim(),a:a.join("|").trim(),cat:"Your questions"};}));
+  if($("shuffle").checked)for(let i=S.questions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[S.questions[i],S.questions[j]]=[S.questions[j],S.questions[i]];}
+  S.teams=S.names.slice(0,S.count).map((n,i)=>({name:n.trim()||DEFAULT_NAMES[i],c:COLORS[i][0],cd:COLORS[i][1],built:0}));
+  resetGame();
+  play("whoosh");
+  if(S.questions.length)showQuestion();else showArena();
+});
+
+function resetGame(){S.teams.forEach(t=>t.built=0);S.round=1;S.qi=0;S.history=[];S.over=false;}
+
+/* ---------- screens ---------- */
+function show(id){["setup-screen","question-screen","castles-screen"].forEach(s=>$(s).classList.toggle("hidden",s!==id));}
+function showQuestion(){
+  const q=S.questions[S.qi];
+  $("q-meta").textContent=`Round ${S.round}`+(q?` · ${q.cat} · Question ${S.qi+1} of ${S.questions.length}`:"");
+  $("q-text").textContent=q?q.q:"That's every question on the list — ask one of your own.";
+  $("q-answer").classList.add("hidden");$("q-answer").textContent=q?q.a:"";
+  $("reveal-btn").classList.toggle("hidden",!(q&&q.a));
+  show("question-screen");
+}
+function showArena(){$("round-label").textContent=`Round ${S.round}`;$("peek-btn").classList.toggle("hidden",!S.questions.length);show("castles-screen");renderLanes();}
+
+$("reveal-btn").addEventListener("click",()=>{play("reveal");setTimeout(()=>$("q-answer").classList.remove("hidden"),S.sound?1100:0);});
+$("to-castles").addEventListener("click",()=>{play("whoosh");showArena();});
+$("peek-btn").addEventListener("click",()=>{play("whoosh");showQuestion();});
+$("next-btn").addEventListener("click",()=>{
+  S.round++;if(S.questions.length)S.qi++;
+  play("whoosh");
+  if(S.questions.length)showQuestion();else{$("round-label").textContent=`Round ${S.round}`;}
+});
+
+/* ---------- arena lanes ---------- */
+function renderLanes(){
+  const L=$("lanes"),n=S.teams.length;L.style.setProperty("--r1",n);L.style.setProperty("--r2",Math.ceil(n/2));L.classList.toggle("many",n>=4);layout();
+  const max=Math.max(...S.teams.map(t=>t.built));
+  L.innerHTML=S.teams.map((t,ti)=>{
+    const lead=max>0&&t.built===max;
+    const slots=Array.from({length:WIN},(_,i)=>`<div class="slot" id="slot-${ti}-${i}">${i<t.built?castleSVG(i+1,t.c,t.cd):emptySVG(i+1)}</div>`).join("");
+    return `<div class="lane${t.built>=WIN?" win":""}" style="--c:${t.c};--cd:${t.cd}">
+      <div class="who"><b>${lead?CROWN:""}${esc(t.name)}</b><small>${t.built} of ${WIN}</small></div>
+      <div class="slots">${slots}</div>
+      <div class="acts"><button class="btn build" data-a="build" data-t="${ti}" ${t.built>=WIN||S.over?"disabled":""}>Make</button><button class="btn ghost" data-a="smash" data-t="${ti}" ${t.built===0||S.over?"disabled":""}>Break</button></div>
+    </div>`;}).join("");
+  $("undo-btn").disabled=!S.history.length;
+  $("mute-btn").textContent=S.sound?"Sound on":"Sound off";
+}
+function layout(){
+  const L=$("lanes"),n=S.teams.length;if(!n||!L.clientWidth)return;
+  const W=L.clientWidth-24,H=L.clientHeight-12,r2=Math.ceil(n/2);
+  const one=Math.min((H-(n-1)*10)/n,(W-150-128-28)/6);
+  const two=Math.min((H-(r2-1)*10)/r2,((W-28)/2-112-14)/6);
+  L.classList.toggle("two",n>=4&&innerWidth>700&&two>one);
+}
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(layout,120);});
+function esc(s){return s.replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));}
+function snapshot(){S.history.push({b:S.teams.map(t=>t.built),over:S.over});if(S.history.length>100)S.history.shift();}
+
+function burst(el,cls,n,spread){
+  const r=el.getBoundingClientRect();
+  for(let i=0;i<n;i++){const d=document.createElement("div");d.className=cls;
+    d.style.left=(r.width*(.25+Math.random()*.5))+"px";d.style.bottom=(r.height*Math.random()*.5)+"px";
+    d.style.setProperty("--dx",((Math.random()-.5)*spread)+"px");d.style.setProperty("--dy",(-Math.random()*spread*.8)+"px");
+    el.appendChild(d);setTimeout(()=>d.remove(),950);}
+}
+
+$("lanes").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-a]");if(!b||b.disabled)return;
+  const ti=+b.dataset.t,t=S.teams[ti];
+  if(b.dataset.a==="build"&&t.built<WIN){
+    snapshot();t.built++;play("build");renderLanes();
+    const slot=$(`slot-${ti}-${t.built-1}`);slot.querySelector("svg").classList.add("rise");burst(slot,"spark",14,140);
+    if(t.built>=WIN){S.over=true;renderLanes();setTimeout(()=>victory(t),900);}
+  }else if(b.dataset.a==="smash"&&t.built>0){
+    snapshot();play("boom");
+    const slot=$(`slot-${ti}-${t.built-1}`);slot.querySelector("svg").classList.add("fall");burst(slot,"dust",22,170);
+    $("lanes").classList.remove("shake");void $("lanes").offsetWidth;$("lanes").classList.add("shake");
+    t.built--;b.disabled=true;setTimeout(renderLanes,850);
+  }
+});
+function undo(){const h=S.history.pop();if(!h)return;S.teams.forEach((t,i)=>t.built=h.b[i]);S.over=h.over;play("undo");renderLanes();}
+$("undo-btn").addEventListener("click",undo);
+$("mute-btn").addEventListener("click",()=>{S.sound=!S.sound;$("sound").checked=S.sound;renderLanes();});
+$("menu-btn").addEventListener("click",()=>$("leave").classList.remove("hidden"));
+$("l-stay").addEventListener("click",()=>$("leave").classList.add("hidden"));
+$("l-go").addEventListener("click",()=>{$("leave").classList.add("hidden");renderSetup();show("setup-screen");});
+
+/* ---------- victory ---------- */
+function victory(t){
+  $("v-castle").innerHTML=castleSVG(6,t.c,t.cd);
+  $("v-title").textContent=`${t.name} win!`;$("v-title").style.color=t.c;
+  $("victory").classList.remove("hidden");play("victory");confetti([t.c,"#ffc83d","#ffffff"]);
+}
+$("v-again").addEventListener("click",()=>{$("victory").classList.add("hidden");resetGame();play("whoosh");if(S.questions.length)showQuestion();else showArena();});
+$("v-setup").addEventListener("click",()=>{$("victory").classList.add("hidden");renderSetup();show("setup-screen");});
+$("v-undo").addEventListener("click",()=>{$("victory").classList.add("hidden");stopConfetti=true;undo();});
+
+let stopConfetti=false;
+function confetti(cols){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const cv=$("confetti"),cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;stopConfetti=false;
+  const P=Array.from({length:220},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.6,vx:(Math.random()-.5)*3,vy:2+Math.random()*4,r:Math.random()*6.3,vr:(Math.random()-.5)*.3,s:6+Math.random()*7,c:cols[Math.floor(Math.random()*cols.length)]}));
+  const end=performance.now()+5500;
+  (function tick(now){
+    cx.clearRect(0,0,cv.width,cv.height);
+    if(now>end||stopConfetti)return;
+    P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;if(p.y>cv.height+20){p.y=-20;p.x=Math.random()*cv.width;}
+      cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore();});
+    requestAnimationFrame(tick);
+  })(performance.now());
+}
+
+renderSetup();
+}
+</script>
+</body>
+</html>
