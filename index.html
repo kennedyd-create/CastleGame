@@ -30,14 +30,33 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .btn.big{font-size:22px;padding:14px 28px;border-radius:18px}
 
 /* setup */
-.setup{max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,56px) max(4vw,16px);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);align-items:center;min-height:100vh}
-.hero h1{font-size:clamp(40px,6vw,68px);color:var(--gold)}
-.hero p{color:var(--mute);font-size:19px;max-width:30ch;margin:12px 0 0}
-.hero svg{width:100%;max-width:440px;height:auto;display:block;margin-top:20px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.4))}
-.panel{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:24px;padding:24px;display:grid;gap:18px}
+.setup{min-height:100vh;min-height:100dvh;display:flex;justify-content:center;align-items:center;padding:clamp(16px,3vw,36px) max(3vw,14px)}
+.setup-wrap{width:100%;max-width:1180px;display:grid;gap:16px}
+.top{display:flex;align-items:center;gap:18px}
+.top .mini svg{width:92px;height:auto;display:block;filter:drop-shadow(0 10px 16px rgba(0,0,0,.4))}
+.top h1{font-size:clamp(30px,4vw,48px);color:var(--gold)}
+.top p{margin:6px 0 0;color:var(--mute);font-size:17px}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+.box{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:22px;padding:18px 20px;display:grid;gap:12px}
+.box h3{font-size:21px}
+.boxhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.grow{display:grid;grid-template-columns:118px minmax(0,1fr);align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.grow:first-child{border-top:0;padding-top:0}
+.grow>span{font-weight:800;font-size:15px}
+.gbtns{display:flex;flex-wrap:wrap;gap:8px}
+.gbtns button{min-height:44px;min-width:96px;border-radius:12px;border:2px solid var(--line);background:rgba(0,0,0,.22);font-family:Fredoka,sans-serif;font-weight:600;font-size:16px;padding:6px 12px}
+.gbtns button:hover{border-color:rgba(255,200,61,.6)}
+.gbtns button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#2a1d00}
+.gbtns button.done:not([aria-pressed=true]){color:var(--mute)}
+.gbtns button span{margin-left:6px;font-size:13px}
+.own textarea{min-height:110px}
+.startbar{display:flex;align-items:center;gap:14px 22px;flex-wrap:wrap;background:rgba(255,200,61,.08);border:1px solid rgba(255,200,61,.35);border-radius:22px;padding:14px 18px}
+.startbar .ready{flex:1 1 220px;margin:0;font-weight:800;font-size:18px;line-height:1.3}
+.startbar .ready small{display:block;color:var(--mute);font-weight:700;font-size:14px}
+.startbar .opts{display:flex;gap:18px;flex-wrap:wrap}
 .panel label,.lbl{font-weight:800;font-size:15px;color:var(--mute)}
 .count{display:flex;gap:8px;flex-wrap:wrap}
-.count button{width:48px;height:48px;border-radius:12px;border:2px solid var(--line);background:transparent;font-family:Fredoka;font-size:20px;font-weight:600}
+.count button{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:transparent;font-family:Fredoka,system-ui,sans-serif;font-size:20px;font-weight:600}
 .count button[aria-pressed=true]{background:var(--gold);color:#2a1d00;border-color:var(--gold)}
 .cats{display:flex;flex-wrap:wrap;gap:8px}
 .cats button{min-height:44px;border-radius:999px;border:2px solid var(--line);background:transparent;padding:6px 14px;font-weight:800;font-size:15px}
@@ -45,12 +64,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .cats button span{opacity:.7;font-weight:700;margin-left:6px}
 .cats button.done:not([aria-pressed=true]){color:var(--mute)}
 .names{display:grid;gap:8px}
-.names div{display:grid;grid-template-columns:14px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:8px;background:rgba(0,0,0,.2);border-radius:12px;padding:4px 4px 4px 12px}
+.names{gap:6px!important}
+.names div{display:grid;grid-template-columns:14px minmax(0,1fr) minmax(0,1fr);align-items:center;gap:8px;min-height:44px;background:rgba(0,0,0,.2);border-radius:12px;padding:4px 4px 4px 12px}
 .names i{width:14px;height:14px;border-radius:50%}
 .names input[data-l=en]{color:var(--mute)}
 .who .en{font-weight:700;font-size:15px;opacity:.85;line-height:1.2}
 #lanes.many .who .en{font-size:13px}
-input[type=text],textarea{width:100%;background:transparent;border:0;color:var(--ink);font:16px Nunito;padding:10px 6px}
+input[type=text],textarea{width:100%;background:transparent;border:0;color:var(--ink);font:16px Nunito,system-ui,sans-serif;padding:10px 6px}
 textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:120px;resize:vertical;font-size:15px}
 .row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
 .chk{display:flex;gap:8px;align-items:center;font-weight:700;color:var(--ink)!important}
@@ -64,12 +84,19 @@ textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:12
 .qphoto{margin:0;display:grid;justify-items:center;gap:4px}
 .qphoto img{display:block;max-height:min(30vh,260px);max-width:min(90vw,420px);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.45);border:3px solid rgba(255,255,255,.85);animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
 .qphoto figcaption{font-size:12px;color:var(--mute)}
-.answer{font-family:Fredoka;font-size:clamp(20px,2.6vw,32px);max-width:32ch;color:var(--gold);background:rgba(255,200,61,.1);border:2px solid rgba(255,200,61,.4);border-radius:16px;padding:10px 24px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+.answer{font-family:Fredoka,system-ui,sans-serif;font-size:clamp(20px,2.6vw,32px);max-width:32ch;color:var(--gold);background:rgba(255,200,61,.1);border:2px solid rgba(255,200,61,.4);border-radius:16px;padding:10px 24px;animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
 
 /* arena */
 .arena{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:12px max(2vw,12px)}
 .bar h2{font-size:22px;color:var(--gold)}
+.tabs{display:inline-flex;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;border-radius:10px;min-height:40px;padding:6px 18px;font-family:Fredoka,system-ui,sans-serif;font-weight:600;font-size:17px;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--gold);color:#2a1d00}
+.tabs button:not([aria-selected=true]):hover{color:var(--ink)}
+.question{position:relative}
+.question .tabs{position:absolute;top:14px;left:50%;transform:translateX(-50%)}
+.barleft{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .bar h2 span{color:var(--mute);font-size:17px;font-weight:600;margin-left:10px}
 .bar .tools{display:flex;gap:8px;flex-wrap:wrap}
 .bar .btn{font-size:15px;padding:8px 14px}
@@ -85,7 +112,7 @@ textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:12
   #lanes.two .acts{justify-content:flex-start;padding-bottom:4px}
 }
 .who{display:flex;flex-direction:column;justify-content:center;gap:2px}
-.who b{font-family:Fredoka;font-size:clamp(18px,2vw,26px);color:var(--c);display:flex;align-items:center;gap:6px;line-height:1.1}
+.who b{font-family:Fredoka,system-ui,sans-serif;font-size:clamp(18px,2vw,26px);color:var(--c);display:flex;align-items:center;gap:6px;line-height:1.1}
 .who b svg{width:24px;height:24px;flex:none}
 .who small{color:var(--mute);font-weight:800;font-size:15px}
 .slots{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:minmax(0,1fr);min-height:0;gap:4px;align-items:stretch;border-bottom:5px solid var(--c);position:relative}
@@ -117,7 +144,8 @@ textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:12
 .card .row{justify-content:center}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 
-@media(max-width:820px){.setup{grid-template-columns:1fr;min-height:0}.hero svg{max-width:300px}}
+@media(max-width:880px){.cols{grid-template-columns:1fr}.setup{align-items:flex-start}}
+@media(max-width:520px){.grow{grid-template-columns:1fr;gap:6px}.top .mini{display:none}}
 @media(max-width:700px){
   .arena{height:auto;min-height:100dvh;overflow:visible}
   #lanes{grid-template-rows:none!important;grid-auto-rows:minmax(150px,auto)}
@@ -132,40 +160,44 @@ textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:12
 
 <!-- SCREEN 1: SETUP -->
 <section id="setup-screen" class="setup">
-  <div class="hero">
-    <h1>Waiheke Sand Castle Game</h1>
-    <p>Answer right, then make a castle — or break a rival's. First rōpū to six castles wins.</p>
-    <div id="hero-castle"></div>
-  </div>
-  <form class="panel" id="setup-form">
-    <div>
-      <div class="lbl">How many rōpū?</div>
-      <div class="count" id="count"></div>
+  <form class="setup-wrap" id="setup-form">
+    <header class="top">
+      <div id="hero-castle" class="mini"></div>
+      <div>
+        <h1>Waiheke Sand Castle Game</h1>
+        <p>Answer right, then make a castle — or break a rival's. First rōpū to six castles wins.</p>
+      </div>
+    </header>
+    <div class="cols">
+      <section class="box">
+        <h3>Choose a game</h3>
+        <div id="games"></div>
+        <div id="own" class="own hidden">
+          <label class="lbl" for="qs">Your own questions</label>
+          <textarea id="qs" placeholder="What is 7 × 8? | 56&#10;Name a kai you'd find at a hāngī | Kūmara, pork, chicken…"></textarea>
+          <p class="hint">One per line, with the answer after a |. Leave it empty to ask questions aloud.</p>
+        </div>
+      </section>
+      <section class="box">
+        <div class="boxhead"><h3>Teams</h3><div class="count" id="count" aria-label="Number of teams"></div></div>
+        <div class="names" id="names"></div>
+        <p class="hint">Tap a name to change it. Māori name on the left, English on the right.</p>
+      </section>
     </div>
-    <div>
-      <div class="lbl">Team names — Māori and English</div>
-      <div class="names" id="names"></div>
-    </div>
-    <div>
-      <div class="lbl" style="margin-bottom:6px">Choose a game — 25 questions each</div>
-      <div class="cats" id="games"></div>
-      <p class="hint" id="cat-hint"></p>
-    </div>
-    <div>
-      <label for="qs">Your own questions</label>
-      <textarea id="qs" placeholder="What is 7 × 8? | 56&#10;Name a kai you'd find at a hāngī | Kūmara, pork, chicken…"></textarea>
-      <p class="hint">One per line, answer after a |. Choose "Your own questions" above to play them, or leave it empty and ask questions aloud.</p>
-    </div>
-    <div class="row">
-      <label class="chk"><input type="checkbox" id="shuffle"> Shuffle the order</label>
-      <label class="chk"><input type="checkbox" id="sound" checked> Sound</label>
-    </div>
-    <button class="btn gold big" type="submit">Start the battle</button>
+    <footer class="startbar">
+      <p class="ready" id="cat-hint"></p>
+      <div class="opts">
+        <label class="chk"><input type="checkbox" id="shuffle"> Shuffle the order</label>
+        <label class="chk"><input type="checkbox" id="sound" checked> Sound</label>
+      </div>
+      <button class="btn gold big" type="submit">Start the game</button>
+    </footer>
   </form>
 </section>
 
 <!-- SCREEN 2: QUESTION -->
 <section id="question-screen" class="question hidden">
+  <div class="tabs" role="tablist"><button role="tab" data-tab="q" aria-selected="true">Question</button><button role="tab" data-tab="c" aria-selected="false">Castles</button></div>
   <div class="meta" id="q-meta"></div>
   <h2 id="q-text"></h2>
   <figure class="qphoto hidden" id="q-photo"><img id="q-img" alt=""><figcaption id="q-credit"></figcaption></figure>
@@ -179,9 +211,8 @@ textarea{background:rgba(0,0,0,.2);border-radius:12px;padding:12px;min-height:12
 <!-- SCREEN 3: THE CASTLES ARENA -->
 <main id="castles-screen" class="arena hidden">
   <div class="bar">
-    <h2>Waiheke Sand Castle Game<span id="round-label"></span></h2>
+    <div class="barleft"><div class="tabs" role="tablist"><button role="tab" data-tab="q" aria-selected="false">Question</button><button role="tab" data-tab="c" aria-selected="true">Castles</button></div><h2><span id="round-label" style="margin-left:0"></span></h2></div>
     <div class="tools">
-      <button class="btn ghost" id="peek-btn">Question</button>
       <button class="btn ghost" id="undo-btn">Undo</button>
       <button class="btn ghost" id="mute-btn">Sound on</button>
       <button class="btn ghost" id="menu-btn">Menu</button>
@@ -239,33 +270,39 @@ function remember(){try{localStorage.setItem("castles-setup-v6",JSON.stringify({
 /* =========================================================================
    DRAMATIC SOUND ENGINE — compressor + big-hall reverb on everything
    ========================================================================= */
-let actx,master,verbIn,noiseBuf;
+let actx,master,verbIn,noiseBuf,OUT;
 function audio(){
   if(!actx){
     actx=new (window.AudioContext||window.webkitAudioContext)();
+    // loud chain: mix → compressor (near-limiter) → makeup gain → soft clipper → speakers
     const comp=actx.createDynamicsCompressor();
-    comp.threshold.value=-16;comp.ratio.value=5;comp.attack.value=.003;comp.release.value=.3;
-    master=actx.createGain();master.gain.value=.95;master.connect(comp);comp.connect(actx.destination);
+    comp.threshold.value=-24;comp.knee.value=6;comp.ratio.value=16;comp.attack.value=.002;comp.release.value=.25;
+    const makeup=actx.createGain();makeup.gain.value=2.3;
+    const clip=actx.createWaveShaper(),cv=new Float32Array(1024);for(let i=0;i<1024;i++){const x=i/512-1;cv[i]=Math.tanh(x*1.4)/Math.tanh(1.4);}clip.curve=cv;
+    master=actx.createGain();master.gain.value=1;master.connect(comp);comp.connect(makeup);makeup.connect(clip);clip.connect(actx.destination);
     const len=actx.sampleRate*3.4,ir=actx.createBuffer(2,len,actx.sampleRate);
     for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8);}
     const conv=actx.createConvolver();conv.buffer=ir;
     verbIn=actx.createGain();verbIn.connect(conv);
-    const wet=actx.createGain();wet.gain.value=.6;conv.connect(wet);wet.connect(master);
+    const wet=actx.createGain();wet.gain.value=.55;conv.connect(wet);wet.connect(master);
     noiseBuf=actx.createBuffer(1,actx.sampleRate*3,actx.sampleRate);
     const nd=noiseBuf.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
   }
   if(actx.state==="suspended")actx.resume();
   return actx;
 }
-function route(node,wet){node.connect(master);if(wet>0){const s=actx.createGain();s.gain.value=wet;node.connect(s);s.connect(verbIn);}}
-function env(g,t,vol,att,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+att);g.gain.exponentialRampToValueAtTime(.0001,t+dur);}
+let PITCH=1;const P=f=>f*PITCH;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function route(node,wet){node.connect(OUT||master);if(wet>0){const s=actx.createGain();s.gain.value=wet;node.connect(s);s.connect(verbIn);}}
+function env(g,t,vol,att,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(vol,.0002),t+att);g.gain.exponentialRampToValueAtTime(.0001,t+dur);}
 function filt(type,t,dur,o){const f=actx.createBiquadFilter();f.type=type;f.Q.value=o.q||1;f.frequency.setValueAtTime(o.f0,t);
   if(o.f2){f.frequency.exponentialRampToValueAtTime(o.f1,t+(o.fAt||dur*.3));f.frequency.exponentialRampToValueAtTime(o.f2,t+dur);}
   else if(o.f1)f.frequency.exponentialRampToValueAtTime(o.f1,t+dur);return f;}
 function tone(freq,t,dur,vol,o={}){
   const osc=actx.createOscillator(),g=actx.createGain();
-  osc.type=o.type||"sine";osc.frequency.setValueAtTime(freq,t);
-  if(o.to)osc.frequency.exponentialRampToValueAtTime(o.to,t+(o.glide||dur));
+  osc.type=o.type||"sine";osc.frequency.setValueAtTime(P(freq),t);
+  if(o.to)osc.frequency.exponentialRampToValueAtTime(P(o.to),t+(o.glide||dur));
+  if(o.vib){const l=actx.createOscillator(),lg=actx.createGain();l.frequency.value=5.5;lg.gain.value=P(freq)*.012;l.connect(lg);lg.connect(osc.frequency);l.start(t);l.stop(t+dur+.05);}
   let n=osc;if(o.f0){const f=filt("lowpass",t,dur,o);osc.connect(f);n=f;}
   n.connect(g);env(g,t,vol,o.att||.008,dur);route(g,o.wet??.3);
   osc.start(t);osc.stop(t+dur+.05);
@@ -278,52 +315,74 @@ function noise(t,dur,vol,o={}){
   n.connect(f);const g=actx.createGain();f.connect(g);env(g,t,vol,o.att||.005,dur);route(g,o.wet??.3);
   src.start(t,Math.random()*.5);src.stop(t+dur+.05);
 }
+function drum(t,vol,f=110){tone(f,t,.35,vol,{to:f*.45,wet:.35});noise(t,.12,vol*.5,{f0:2200,f1:300,wet:.3});}
+function cheer(t,dur,vol){ // crowd roar: many band-passed noise voices swelling
+  for(let i=0;i<7;i++)noise(t+rnd(0,.15),dur,vol*rnd(.5,1),{ft:"bandpass",f0:rnd(500,1400),f1:rnd(700,2200),f2:rnd(400,900),fAt:dur*.4,q:rnd(3,7),att:dur*.25,wet:.6});
+}
 const SFX={
-  reveal(t){ // snare roll that accelerates, then a cymbal + shimmering chord
-    let x=0;for(let i=0;i<16;i++){noise(t+x,.08,.12+i*.03,{ft:"bandpass",f0:1900,f1:1300,q:.9,wet:.15});tone(160,t+x,.07,.1+i*.02,{to:100});x+=.07-i*.0033;}
-    const h=t+x+.04;
-    tone(70,h,.9,1,{to:38});noise(h,.25,.7,{f0:1500,f1:100});
-    noise(h,2.6,.45,{ft:"highpass",f0:5500,f1:8000,wet:.55});
-    [523.25,659.25,783.99,1046.5].forEach((f,i)=>{tone(f,h,2.2,.16,{type:"triangle",wet:.7});tone(f*2,h+i*.07,1.6,.05,{wet:.8});});
+  tab(t){tone(880,t,.12,.25,{type:"triangle",wet:.2});tone(1320,t+.05,.15,.2,{type:"triangle",wet:.3});noise(t,.15,.25,{ft:"bandpass",f0:600,f1:3000,q:2,wet:.2});},
+  reveal(t){ // drum roll that speeds up & swells → crash → big major chord stab
+    let x=0;for(let i=0;i<22;i++){noise(t+x,.09,.1+i*.035,{ft:"bandpass",f0:1900,f1:1200,q:.9,wet:.15});tone(170,t+x,.08,.08+i*.025,{to:100});x+=.075-i*.0026;}
+    const h=t+x+.03;
+    tone(60,h,1.2,1.2,{to:30,wet:.4});noise(h,.35,.9,{f0:2500,f1:120});drum(h,1,90);
+    noise(h,3,.6,{ft:"highpass",f0:5000,f1:8500,wet:.65});
+    [261.63,392,523.25,659.25,783.99,1046.5].forEach((f,i)=>{tone(f,h,2.4,.17,{type:"sawtooth",att:.01,f0:5000,f1:900,wet:.6,vib:1});tone(f*2,h+i*.05,1.6,.06,{type:"triangle",wet:.8});});
   },
-  build(t){ // ground-thump, rising brass swell, glittering arpeggio
-    tone(170,t,.5,1,{to:42});noise(t,.4,.7,{f0:1200,f1:70,wet:.3});
-    noise(t,.5,.25,{ft:"bandpass",f0:400,f1:3000,q:1.5,wet:.4});
+  build(t,o){ // pitch rises with each castle; bigger castles = longer arpeggio + crowd
+    const tier=o.tier||1,k=Math.pow(2,(tier-1)*2/12);
+    drum(t,1.1,150);noise(t,.5,.8,{f0:1500,f1:70,wet:.3});
+    noise(t,.6,.35,{ft:"bandpass",f0:300,f1:4000,q:1.5,wet:.4});
     [130.81,196,261.63,329.63,392].forEach(f=>{
-      tone(f,t+.05,1.9,.13,{type:"sawtooth",att:.05,f0:250,f1:4800,f2:700,fAt:.22,wet:.5});
-      tone(f*1.006,t+.05,1.9,.09,{type:"sawtooth",att:.05,f0:250,f1:4800,f2:700,fAt:.22,wet:.5});
+      tone(f*k,t+.05,1.8+tier*.15,.15,{type:"sawtooth",att:.04,f0:300,f1:5500,f2:800,fAt:.2,wet:.5,vib:1});
+      tone(f*k*1.007,t+.05,1.8+tier*.15,.1,{type:"sawtooth",att:.04,f0:300,f1:5500,f2:800,fAt:.2,wet:.5});
     });
-    tone(65.4,t+.05,1.7,.5,{type:"triangle",wet:.2});
-    [523.25,659.25,783.99,1046.5,1318.5,1568].forEach((f,i)=>tone(f,t+.22+i*.065,.9,.11,{type:"triangle",wet:.7}));
+    tone(65.4*k,t+.05,1.7,.7,{type:"triangle",wet:.2});
+    const arp=[523.25,659.25,783.99,1046.5,1318.5,1568,2093];
+    for(let i=0;i<3+tier;i++)tone(arp[i%7]*k*(i>=7?2:1),t+.2+i*.06,.9,.13,{type:"triangle",wet:.7});
+    if(tier>=3)cheer(t+.15,1.4+tier*.2,.18+tier*.05);
+    if(tier>=5){drum(t+.55,1,120);drum(t+.7,1.1,110);}
   },
-  whoosh(t){ // big airy sweep past the ear
-    noise(t,.85,.9,{ft:"bandpass",f0:220,f1:3800,f2:260,fAt:.38,q:2.2,att:.32,wet:.45});
-    tone(1100,t,.8,.18,{to:110,att:.25,wet:.4});
-    tone(80,t+.38,.5,.6,{to:40});
+  whoosh(t){
+    const up=Math.random()<.5;
+    noise(t,.8,1,{ft:"bandpass",f0:up?200:3500,f1:up?4200:300,f2:up?300:180,fAt:.38,q:2.4,att:.3,wet:.45});
+    tone(up?150:1200,t,.7,.2,{to:up?1300:110,att:.25,wet:.4});
+    drum(t+.38,.9,85);
   },
-  boom(t){ // cannon crack, sub drop, crumbling rubble
-    noise(t,.14,1,{ft:"highpass",f0:2500,f1:900,wet:.35});
-    tone(130,t,2.6,1,{to:20,glide:1.8,wet:.45});
-    tone(58,t,2,.65,{type:"square",to:18,glide:1.5,f0:700,f1:70,wet:.25});
-    noise(t,3,1,{f0:4500,f1:55,dist:true,wet:.65});
-    tone(38,t+.12,2.8,.55,{wet:0});
-    for(let i=0;i<12;i++){const d=.22+Math.random()*1.5;noise(t+d,.05+Math.random()*.09,.08+.3*(1-d/1.8),{ft:"bandpass",f0:500+Math.random()*2800,f1:350,q:3,wet:.45});}
+  boom(t,o){ // bigger castle = bigger explosion and more rubble
+    const tier=o.tier||3,v=.75+tier*.06;
+    noise(t,.16,1.2,{ft:"highpass",f0:2500,f1:900,wet:.35});
+    tone(140,t,2.8,1.3*v,{to:18,glide:1.9,wet:.45});
+    tone(60,t,2.2,.8*v,{type:"square",to:16,glide:1.6,f0:800,f1:60,wet:.25});
+    noise(t,3.2,1.2*v,{f0:5000,f1:50,dist:true,wet:.65});
+    tone(36,t+.1,3,.8,{wet:0});
+    for(let i=0;i<8+tier*3;i++){const d=rnd(.2,1.9);noise(t+d,rnd(.04,.14),(.12+.35*(1-d/2))*v,{ft:"bandpass",f0:rnd(400,3500),f1:300,q:3,wet:.45});}
+    tone(300,t+.5,1.1,.12,{to:150,type:"sawtooth",f0:1200,f1:300,wet:.6});tone(290,t+.5,1.1,.12,{to:140,type:"sawtooth",f0:1200,f1:300,wet:.6}); // "wah-wah" groan
   },
-  victory(t){ // timpani roll → crash → booming fanfare → final crash
-    for(let i=0,x=0;i<18;i++){tone(98,t+x,.3,.15+i*.045,{to:88,wet:.4});x+=.06;}
-    const c=t+1.1;
-    tone(65,c,1.4,1,{to:35,wet:.5});noise(c,3,.6,{ft:"highpass",f0:4000,f1:7000,wet:.6});
-    [{f:392,s:0,d:.25},{f:392,s:.3,d:.25},{f:392,s:.6,d:.25},{f:523.25,s:.9,d:.8},{f:392,s:1.8,d:.3},{f:523.25,s:2.1,d:2.2},{f:659.25,s:2.1,d:2.2},{f:783.99,s:2.1,d:2.2}].forEach(n=>{
-      [1,1.006,.994].forEach(dt=>tone(n.f*dt,c+n.s,n.d,.1,{type:"sawtooth",att:.03,f0:900,f1:4000,f2:700,fAt:.1,wet:.55}));
-      tone(n.f/2,c+n.s,n.d,.14,{type:"square",f0:600,f1:300,wet:.4});
-      tone(n.f/4,c+n.s,n.d,.3,{type:"triangle",wet:.3});
+  victory(t){
+    for(let i=0,x=0;i<22;i++){tone(98,t+x,.3,.2+i*.05,{to:88,wet:.4});x+=.055;}
+    const c=t+1.2;
+    tone(55,c,1.6,1.3,{to:30,wet:.5});noise(c,3.4,.8,{ft:"highpass",f0:4000,f1:7500,wet:.6});drum(c,1.2,80);
+    cheer(c,5,.5);
+    [{f:392,s:0,d:.25},{f:392,s:.3,d:.25},{f:392,s:.6,d:.25},{f:523.25,s:.9,d:.8},{f:392,s:1.8,d:.3},{f:523.25,s:2.1,d:2.4},{f:659.25,s:2.1,d:2.4},{f:783.99,s:2.1,d:2.4}].forEach(n=>{
+      [1,1.006,.994].forEach(dt=>tone(n.f*dt,c+n.s,n.d,.13,{type:"sawtooth",att:.03,f0:900,f1:4500,f2:800,fAt:.1,wet:.55,vib:n.d>1}));
+      tone(n.f/2,c+n.s,n.d,.18,{type:"square",f0:600,f1:300,wet:.4});
+      tone(n.f/4,c+n.s,n.d,.4,{type:"triangle",wet:.3});
+      drum(c+n.s,.7,100);
     });
-    const e=c+2.1;tone(55,e,2,1,{to:30,wet:.6});noise(e,3,.7,{ft:"highpass",f0:3500,f1:7500,wet:.7});
-    for(let i=0;i<10;i++)tone(98,e+.1+i*.07,.3,.25,{to:90,wet:.4});
+    const e=c+2.1;tone(50,e,2.4,1.3,{to:28,wet:.6});noise(e,3.4,.9,{ft:"highpass",f0:3500,f1:7500,wet:.7});
+    for(let i=0;i<12;i++)tone(98,e+.1+i*.065,.3,.35,{to:90,wet:.4});
   },
-  undo(t){tone(700,t,.25,.2,{to:300,type:"triangle",wet:.3});}
+  undo(t){tone(700,t,.3,.3,{to:250,type:"triangle",wet:.3});tone(520,t+.08,.3,.2,{to:200,type:"triangle",wet:.3});}
 };
-function play(name){if(!S.sound)return;try{audio();SFX[name](actx.currentTime+.02);}catch(e){}}
+function play(name,o={}){
+  if(!S.sound)return;
+  try{
+    audio();
+    PITCH=name==="build"?1:rnd(.96,1.04); // small random variation so repeats never sound identical
+    if(actx.createStereoPanner){OUT=actx.createStereoPanner();OUT.pan.value=o.pan??0;OUT.connect(master);}else OUT=master;
+    SFX[name](actx.currentTime+.02,o);
+  }catch(e){}finally{OUT=null;PITCH=1;}
+}
 
 /* =========================================================================
    6-TIER PROGRESSIVE CASTLE SVG
@@ -363,9 +422,12 @@ function renderSetup(){
   $("count").innerHTML=[2,3,4,5,6].map(n=>`<button type="button" data-n="${n}" aria-pressed="${n===S.count}">${n}</button>`).join("");
   const at=s=>String(s).replace(/"/g,"&quot;");
   $("names").innerHTML=S.names.slice(0,S.count).map((nm,i)=>`<div><i style="background:${COLORS[i][0]}"></i><input type="text" data-i="${i}" data-l="mi" value="${at(nm)}" aria-label="Team ${i+1} Māori name" maxlength="18"><input type="text" data-i="${i}" data-l="en" value="${at(S.en[i]??"")}" aria-label="Team ${i+1} English name" placeholder="English name" maxlength="20"></div>`).join("");
-  const btn=(i,txt)=>{const done=S.played.includes(txt);return `<button type="button" data-g="${i}" aria-pressed="${S.game===i}" class="${done?"done":""}">${txt}${done?"<span>✓</span>":""}</button>`;};
-  $("games").innerHTML=GAMES.map((g,i)=>btn(i,g.name)).join("")+btn(-1,"Your own questions");
-  $("cat-hint").textContent=(S.game>=0?`${GAMES[S.game].name} is ready.`:"Type your questions below, or leave the box empty and ask them aloud.")+(S.played.length?" A ✓ means you've played it before.":"");
+  const btn=(i,txt,full)=>{const done=S.played.includes(full);return `<button type="button" data-g="${i}" aria-pressed="${S.game===i}" class="${done?"done":""}" title="${full}">${txt}${done?"<span>✓</span>":""}</button>`;};
+  const topics=[...new Set(GAMES.map(g=>g.name.replace(/ Game \d+$/,"")))];
+  $("games").innerHTML=topics.map(t=>`<div class="grow"><span>${t.replace(/ Questions$/,"")}</span><div class="gbtns">${GAMES.map((g,i)=>g.name.startsWith(t+" Game")?btn(i,g.name.replace(t+" ",""),g.name):"").join("")}</div></div>`).join("")+`<div class="grow"><span>Your own</span><div class="gbtns">${btn(-1,"My questions","Your own questions")}</div></div>`;
+  $("own").classList.toggle("hidden",S.game!==-1);
+  const label=S.game>=0?GAMES[S.game].name:"Your own questions";
+  $("cat-hint").innerHTML=`${esc(label)}<small>${S.count} teams · ${S.game>=0?GAMES[S.game].qs.length+" questions":"questions from the box, or asked aloud"}${S.played.length?" · ✓ = played before":""}</small>`;
   $("hero-castle").innerHTML=castleSVG(6,"#ffc83d","#c9931c");
 }
 $("count").addEventListener("click",e=>{const n=+e.target.dataset.n;if(n){S.count=n;renderSetup();remember();}});
@@ -383,10 +445,10 @@ $("setup-form").addEventListener("submit",e=>{
   S.teams=S.names.slice(0,S.count).map((n,i)=>({name:n.trim()||DEFAULT_NAMES[i],en:(S.en[i]||"").trim(),c:COLORS[i][0],cd:COLORS[i][1],built:0}));
   resetGame();
   play("whoosh");
-  if(S.questions.length)showQuestion();else showArena();
+  showArena();
 });
 
-function resetGame(){S.teams.forEach(t=>t.built=0);S.round=1;S.qi=0;S.history=[];S.over=false;}
+function resetGame(){S.teams.forEach(t=>t.built=0);S.round=1;S.qi=0;S.history=[];S.over=false;S.asked=false;}
 
 /* ---------- screens ---------- */
 function show(id){["setup-screen","question-screen","castles-screen"].forEach(s=>$(s).classList.toggle("hidden",s!==id));}
@@ -398,6 +460,7 @@ function setPhoto(q,show){
   f.classList.remove("hidden");
 }
 function showQuestion(){
+  S.asked=true;
   const q=S.questions[S.qi];
   $("q-meta").textContent=q?`Question ${S.qi+1} of ${S.questions.length}`:"";
   $("q-text").textContent=q?q.q:"That's all the questions! Ask one of your own, or choose the next game from the Menu.";
@@ -406,12 +469,18 @@ function showQuestion(){
   $("reveal-btn").classList.toggle("hidden",!(q&&q.a));
   show("question-screen");
 }
-function showArena(){$("round-label").textContent=S.questions.length?`Question ${Math.min(S.qi+1,S.questions.length)} of ${S.questions.length}`:`Round ${S.round}`;$("peek-btn").classList.toggle("hidden",!S.questions.length);show("castles-screen");renderLanes();}
+function showArena(){
+  const n=S.questions.length;
+  $("round-label").textContent=n?(S.asked?`Question ${Math.min(S.qi+1,n)} of ${n}`:`${S.label} · ${n} questions`):`Round ${S.round}`;
+  $("next-btn").textContent=n&&!S.asked?"Start question 1":"Next question";
+  show("castles-screen");renderLanes();
+}
 
 $("reveal-btn").addEventListener("click",()=>{play("reveal");$("reveal-btn").classList.add("hidden");setTimeout(()=>{$("q-answer").classList.remove("hidden");setPhoto(S.questions[S.qi],true);},S.sound?1100:0);});
 $("to-castles").addEventListener("click",()=>{play("whoosh");showArena();});
-$("peek-btn").addEventListener("click",()=>{play("whoosh");showQuestion();});
+document.addEventListener("click",e=>{const b=e.target.closest(".tabs button[data-tab]");if(!b||b.getAttribute("aria-selected")==="true")return;play("tab");if(b.dataset.tab==="c")showArena();else showQuestion();});
 $("next-btn").addEventListener("click",()=>{
+  if(S.questions.length&&!S.asked){play("whoosh");showQuestion();return;}
   S.round++;if(S.questions.length)S.qi++;
   play("whoosh");
   if(S.questions.length)showQuestion();else{$("round-label").textContent=`Round ${S.round}`;}
@@ -455,16 +524,17 @@ $("lanes").addEventListener("click",e=>{
   const b=e.target.closest("button[data-a]");if(!b||b.disabled)return;
   const ti=+b.dataset.t,t=S.teams[ti];
   if(b.dataset.a==="build"&&t.built<WIN){
-    snapshot();t.built++;play("build");renderLanes();
+    snapshot();t.built++;play("build",{tier:t.built,pan:pan(ti)});renderLanes();
     const slot=$(`slot-${ti}-${t.built-1}`);slot.querySelector("svg").classList.add("rise");burst(slot,"spark",14,140);
     if(t.built>=WIN){S.over=true;renderLanes();setTimeout(()=>victory(t),900);}
   }else if(b.dataset.a==="smash"&&t.built>0){
-    snapshot();play("boom");
+    snapshot();play("boom",{tier:t.built,pan:pan(ti)});
     const slot=$(`slot-${ti}-${t.built-1}`);slot.querySelector("svg").classList.add("fall");burst(slot,"dust",22,170);
     $("lanes").classList.remove("shake");void $("lanes").offsetWidth;$("lanes").classList.add("shake");
     t.built--;b.disabled=true;setTimeout(renderLanes,850);
   }
 });
+function pan(ti){const n=S.teams.length;if(n<2)return 0;const two=$("lanes").classList.contains("two");return two?(ti%2?.55:-.55):((ti/(n-1))*1.1-.55);}
 function undo(){const h=S.history.pop();if(!h)return;S.teams.forEach((t,i)=>t.built=h.b[i]);S.over=h.over;play("undo");renderLanes();}
 $("undo-btn").addEventListener("click",undo);
 $("mute-btn").addEventListener("click",()=>{S.sound=!S.sound;$("sound").checked=S.sound;renderLanes();});
@@ -478,7 +548,7 @@ function victory(t){
   $("v-title").textContent=`${t.name} win!`;$("v-sub").textContent=(t.en?`${t.en} — `:"")+"six castles raised. The kingdom is theirs.";$("v-title").style.color=t.c;
   $("victory").classList.remove("hidden");play("victory");confetti([t.c,"#ffc83d","#ffffff"]);
 }
-$("v-again").addEventListener("click",()=>{$("victory").classList.add("hidden");resetGame();play("whoosh");if(S.questions.length)showQuestion();else showArena();});
+$("v-again").addEventListener("click",()=>{$("victory").classList.add("hidden");resetGame();play("whoosh");showArena();});
 $("v-setup").addEventListener("click",()=>{$("victory").classList.add("hidden");renderSetup();show("setup-screen");});
 $("v-undo").addEventListener("click",()=>{$("victory").classList.add("hidden");stopConfetti=true;undo();});
 
